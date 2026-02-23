@@ -1,7 +1,3 @@
-# SSH client config to use private key and disable password auth
-
-Host myserver               # nickname for the server
-    HostName 98.98.98.98    # replace with your server's IP or hostname
-    User ubuntu             # login username
-    IdentityFile ~/.ssh/school  # private key used for authentication
-    PasswordAuthentication no   # refuse password authentication
+Host *
+    IdentityFile ~/.ssh/school
+    PasswordAuthentication no
