@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Update package list
+apt-get update -y
+
+# Install nginx
+apt-get install -y nginx
+
+# Create custom HTML page
+echo "Holberton School for the win!" > /var/www/html/index.html
+
+# Ensure nginx is running (without using systemctl)
+service nginx start
