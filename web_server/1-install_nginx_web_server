@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
-# Update package list
-apt-get update -y
+set -e
 
-# Install nginx
+apt-get update -y
 apt-get install -y nginx
 
-# Ensure nginx is started
+rm -rf /var/www/html/*
+echo "Holberton School for the win!" > /var/www/html/index.html
+
 service nginx start
-
-# Replace default page content
-echo "Holberton School for the win!" > /var/www/html/index.nginx-debian.html
-
-# Restart nginx (NOT using systemctl)
 service nginx restart
