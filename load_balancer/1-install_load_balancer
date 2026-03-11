@@ -1,56 +1,24 @@
 #!/usr/bin/env bash
-# Installs and configures HAproxy on lb-01
-# - Sends traffic to web-01 and web-02 using roundrobin
-# - HAproxy managed via init script
+# Installs and configures HAProxy on a new Ubuntu machine
+# to distribute traffic to web-01 and web-02 using roundrobin
 
-# Update and install HAproxy
-apt-get update -y
-apt-get install -y haproxy
+sudo apt-get update
+sudo apt-get -y install haproxy
 
-# Enable HAproxy to be managed via init script
-echo "ENABLED=1" > /etc/default/haproxy
+# Enable HAProxy to be managed via init script
+sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
 
-# Get web server IPs from hostname resolution
-WEB_01_IP=$(getent hosts 7025-web-01 | awk '{ print $1 }')
-WEB_02_IP=$(getent hosts 7025-web-02 | awk '{ print $1 }')
+# Configure HAProxy frontend and backend
+sudo tee -a /etc/haproxy/haproxy.cfg > /dev/null <<EOF
 
-# Configure HAproxy
-cat > /etc/haproxy/haproxy.cfg << HAPROXY
-global
-    log /dev/log local0
-    log /dev/log local1 notice
-    chroot /var/lib/haproxy
-    stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
-    stats timeout 30s
-    user haproxy
-    group haproxy
-    daemon
-
-defaults
-    log     global
-    mode    http
-    option  httplog
-    option  dontlognull
-    timeout connect 5000
-    timeout client  50000
-    timeout server  50000
-    errorfile 400 /etc/haproxy/errors/400.http
-    errorfile 403 /etc/haproxy/errors/403.http
-    errorfile 408 /etc/haproxy/errors/408.http
-    errorfile 500 /etc/haproxy/errors/500.http
-    errorfile 502 /etc/haproxy/errors/502.http
-    errorfile 503 /etc/haproxy/errors/503.http
-    errorfile 504 /etc/haproxy/errors/504.http
-
-frontend http_front
+frontend wilson_frontend
     bind *:80
-    default_backend http_back
+    default_backend wilson_backend
 
-backend http_back
+backend wilson_backend
     balance roundrobin
-    server 7025-web-01 ${WEB_01_IP}:80 check
-    server 7025-web-02 ${WEB_02_IP}:80 check
-HAPROXY
+    server 7007-web-01 34.239.0.61:80 check
+    server 7007-web-02 3.87.217.227:80 check
+EOF
 
-# Enable and restart HAproxy via init script
-service haproxy restart
+sudo service haproxy restart
