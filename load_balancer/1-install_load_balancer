@@ -11,7 +11,7 @@ apt-get install -y haproxy
 echo "ENABLED=1" > /etc/default/haproxy
 
 # Configure HAproxy
-cat > /etc/haproxy/haproxy.cfg << 'EOF'
+cat > /etc/haproxy/haproxy.cfg << 'HAPROXY'
 global
     log /dev/log local0
     log /dev/log local1 notice
@@ -44,9 +44,9 @@ frontend http_front
 
 backend http_back
     balance roundrobin
-    server [STUDENT_ID]-web-01 <WEB_01_IP>:80 check
-    server [STUDENT_ID]-web-02 <WEB_02_IP>:80 check
-EOF
+    server 7025-web-01 44.203.48.14:80 check
+    server 7025-web-02 44.203.119.237:80 check
+HAPROXY
 
 # Enable and restart HAproxy via init script
 service haproxy restart
