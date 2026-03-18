@@ -10,6 +10,10 @@ echo "Holberton School" | tee /var/www/html/index.html > /dev/null
 # Create custom 404 page
 echo "Ceci n'est pas une page" | tee /var/www/html/404.html > /dev/null
 
+# Remove existing default configs
+rm -f /etc/nginx/sites-enabled/default
+rm -f /etc/nginx/sites-available/default
+
 # Write clean config
 tee /etc/nginx/sites-available/default > /dev/null <<'NGINX'
 server {
@@ -33,6 +37,7 @@ server {
 }
 NGINX
 
-cp /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+# Create symlink
+ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 nginx -t && service nginx restart
