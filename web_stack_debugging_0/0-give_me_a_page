@@ -1,0 +1,12 @@
+# Get inside the container
+docker exec -it <container_id> bash
+
+# Install Apache (if not installed)
+apt-get update
+apt-get install apache2 -y
+
+# Create the page
+echo "Hello Holberton" > /var/www/html/index.html
+
+# Start Apache
+service apache2 start
